@@ -11,7 +11,8 @@
 
   <ItemGroup>
     <PackageReference Include="Markdig" Version="0.40.0" />
-    <PackageReference Include="DotLiquid" Version="2.2.692" />
+    <PackageReference Include="Fluid.Core" Version="2.31.0" />
+    <PackageReference Include="Microsoft.Extensions.FileProviders.Physical" Version="10.0.8" />
     <PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
     <PackageReference Include="YamlDotNet" Version="16.3.0" />
   </ItemGroup>
