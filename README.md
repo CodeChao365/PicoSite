@@ -6,6 +6,11 @@
 
 > Write Markdown, run two commands, get a website.
 
+Traditional SSGs are built on Node.js — powerful but bloated and slow.
+Go/Rust alternatives are lightweight but follow "config-driven + rigid theme" patterns.
+
+**PicoSite aims to be: simple, no burden, just works.**
+
 **Download** 👉 https://github.com/benyuz/PicoSite/releases (single-file ~10MB for your platform)
 
 ---

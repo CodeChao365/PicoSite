@@ -6,6 +6,11 @@
 
 > 写 Markdown，运行两条命令，得到一个网站。
 
+传统 SSG 多基于 Node.js 生态，依赖臃肿、构建缓慢。
+Go、Rust 生态虽有轻量级工具，但大多沿用「配置驱动+固定主题结构」的模式，学习成本和扩展门槛依然不低。
+
+**PicoSite 的理想是：简单，没负担，好用。**
+
 **下载** 👉 https://github.com/benyuz/PicoSite/releases （选择对应平台的单文件，~10MB）
 
 ---
