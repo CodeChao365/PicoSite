@@ -1,0 +1,124 @@
+[**中文**](README.zh-CN.md) | [**English**](README.md)
+
+---
+
+# PicoSite — 零配置静态站点生成器
+
+> 写 Markdown，运行两条命令，得到一个网站。
+
+**下载** 👉 https://github.com/benyuz/PicoSite/releases （选择对应平台的单文件，~10MB）
+
+---
+
+## 快速开始
+
+1. 把 `picosite` 放到 Markdown 文件夹里
+2. 运行 `picosite serve` 打开 http://localhost:8080 预览
+3. 改内容保存后浏览器自动刷新
+
+发布时运行 `picosite build`，静态文件输出到 `_site/`。
+
+---
+
+## 命令
+
+| 命令 | 说明 |
+|------|------|
+| `picosite serve` | 启动预览服务器（支持热重载）|
+| `picosite build` | 生成静态文件到 `_site/` |
+
+| 选项 | 适用 | 默认 |
+|------|------|------|
+| `--port 3000` | serve | 8080 |
+| `--theme dark` | serve, build | default |
+| `--output ./dist` | build | ./_site |
+
+---
+
+## 编写内容
+
+Markdown 文件放在 `content/` 下，文件路径就是 URL：
+
+```
+content/index.md      → /
+content/about.md      → /about
+content/blog/post.md  → /blog/post
+```
+
+文件头部可加 YAML Front Matter：
+
+```markdown
+---
+title: 文章标题
+date: 2026-06-09
+---
+
+## 正文
+
+支持 **Markdown** 语法。
+```
+
+---
+
+## 配置（可选）
+
+创建 `picosite.json`：
+
+```json
+{
+  "title": "我的站点",
+  "theme": "default",
+  "port": 8080
+}
+```
+
+所有字段可选，不配置用默认值。
+
+---
+
+## 主题系统
+
+主题放在 `Themes/<主题名>/`，结构如下：
+
+```
+index.html      # 主布局
+header.html     # 头部片段
+sidebar.html    # 侧边栏片段
+assets/style.css # 样式
+```
+
+模板中可用的变量：
+
+| 变量 | 说明 |
+|------|------|
+| `{{ site.title }}` | 站点标题 |
+| `{{ site.pages }}` | 所有页面 |
+| `{{ page.title }}` | 当前页面标题 |
+| `{{ page.url }}` | 当前页面 URL |
+| `{{ page.date }}` | 页面日期 |
+| `{{ content }}` | Markdown 渲染后的 HTML |
+| `{{ theme.assets }}` | 主题资源路径 |
+
+支持 Liquid 标签：`{% include %}` `{% for %}` `{% if %}`。
+
+---
+
+## 技术栈
+
+**Markdig** 解析 Markdown · **Fluid.Core** 渲染 Liquid 模板 · **PicoServer** 托管 + 热重载 · **System.CommandLine** CLI 框架 · **.NET 10** AOT 编译为 ~10MB 单文件
+
+---
+
+## 路线图
+
+| 版本 | 内容 |
+|------|------|
+| v1.0 | 主题美化 + 侧边栏自动生成 + 多语言 + 404 页 |
+| v1.1 | API 文档生成 |
+| v2.0 | 插件系统 |
+
+---
+
+## 开源协议
+
+MIT
