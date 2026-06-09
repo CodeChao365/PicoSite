@@ -1,0 +1,26 @@
+# .NET
+bin/
+obj/
+*.user
+*.suo
+*.cache
+*.vs/
+.vs/
+
+# Build output
+_site/
+dist/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Codegraph / Reasonix (development agent metadata)
+.codegraph/
+.reasonix/
+
+# OS
+.DS_Store
+Thumbs.db

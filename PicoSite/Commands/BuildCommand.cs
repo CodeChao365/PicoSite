@@ -1,0 +1,55 @@
+using System.CommandLine;
+using PicoSite.Models;
+using PicoSite.Services;
+
+namespace PicoSite.Commands;
+
+public class BuildCommand : Command
+{
+    public BuildCommand(ConfigLoader configLoader, MarkdownParser markdownParser)
+        : base("build", "生成静态文件")
+    {
+        var outputOption = new Option<string>("--output")
+        {
+            Description = "输出目录",
+        };
+
+        var themeOption = new Option<string>("--theme")
+        {
+            Description = "指定主题",
+        };
+
+        AddOption(outputOption);
+        AddOption(themeOption);
+
+        this.SetHandler((string output, string theme) =>
+        {
+            var config = configLoader.Load(Directory.GetCurrentDirectory());
+            if (!string.IsNullOrEmpty(theme)) config.Theme = theme;
+            if (!string.IsNullOrEmpty(output)) config.Output = output;
+            RunBuild(config, markdownParser);
+        }, outputOption, themeOption);
+    }
+
+    private static void RunBuild(SiteConfig config, MarkdownParser parser)
+    {
+        var workingDir = Directory.GetCurrentDirectory();
+        var sourceDir = SiteGenerator.FindSourceDir(workingDir);
+        var outputDir = Path.GetFullPath(config.Output ?? "./_site");
+        var themeDir = Path.Combine(AppContext.BaseDirectory, "Themes", config.Theme ?? "default");
+
+        Console.WriteLine("PicoSite 构建");
+        Console.WriteLine($"源目录: {sourceDir}");
+        Console.WriteLine($"输出目录: {outputDir}");
+        Console.WriteLine($"主题: {config.Theme}");
+        Console.WriteLine();
+
+        var templates = new TemplateEngine(themeDir);
+        var generator = new SiteGenerator(parser, templates, config);
+
+        generator.Build(sourceDir, outputDir);
+
+        var count = Directory.GetFiles(outputDir, "*.html", SearchOption.AllDirectories).Length;
+        Console.WriteLine($"完成！共生成 {count} 个页面");
+    }
+}

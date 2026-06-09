@@ -1,0 +1,6 @@
+{
+  "title": "我的 PicoSite",
+  "description": "用 PicoSite 搭建的静态站点",
+  "theme": "default",
+  "port": 8080
+}
