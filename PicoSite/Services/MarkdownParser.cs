@@ -1,11 +1,9 @@
 using Markdig;
-using YamlDotNet.Serialization;
 
 namespace PicoSite.Services;
 
 public class MarkdownParser
 {
-    private readonly IDeserializer _yaml = new DeserializerBuilder().Build();
     private readonly MarkdownPipeline _pipeline = new MarkdownPipelineBuilder().Build();
 
     public (Dictionary<string, object>? FrontMatter, string Html) Parse(string markdown)
@@ -26,7 +24,6 @@ public class MarkdownParser
 
             for (int i = headerLen; i < searchLimit - 4; i++)
             {
-                // 从 i 开始是 \r\n--- 或 \n--- 就算命中
                 if (body[i] == '\r' && body[i + 1] == '\n' &&
                     body[i + 2] == '-' && body[i + 3] == '-' && body[i + 4] == '-')
                 {
@@ -51,12 +48,82 @@ public class MarkdownParser
                 if (body.StartsWith("\r\n")) body = body[2..];
                 else if (body.StartsWith("\n")) body = body[1..];
 
-                try { frontMatter = _yaml.Deserialize<Dictionary<string, object>>(yamlBlock); }
-                catch { /* YAML 解析失败，按无 Front Matter 处理 */ }
+                frontMatter = ParseSimpleYaml(yamlBlock);
             }
         }
 
         var html = Markdown.ToHtml(body, _pipeline);
         return (frontMatter, html);
+    }
+
+    /// <summary>
+    /// 简单的 YAML key: value 解析器，AOT 兼容，无需 YamlDotNet。
+    /// 支持基本 Front Matter 格式：key: value、key: "quoted"、布尔、数字。
+    /// 不支持嵌套结构、数组、多行值等复杂 YAML。
+    /// </summary>
+    private static Dictionary<string, object>? ParseSimpleYaml(string yaml)
+    {
+        var result = new Dictionary<string, object>();
+
+        foreach (var line in yaml.Split('\n', StringSplitOptions.RemoveEmptyEntries))
+        {
+            var trimmed = line.Trim();
+            if (string.IsNullOrEmpty(trimmed) || trimmed.StartsWith('#'))
+                continue;
+
+            var colonIndex = trimmed.IndexOf(':');
+            if (colonIndex <= 0)
+                continue;
+
+            var key = trimmed[..colonIndex].Trim();
+            if (string.IsNullOrEmpty(key))
+                continue;
+
+            var rawValue = trimmed[(colonIndex + 1)..].Trim();
+
+            // 跳过复杂的 YAML 结构（嵌套、多行）
+            if (string.IsNullOrEmpty(rawValue) || rawValue.StartsWith('>') || rawValue.StartsWith('|'))
+                continue;
+
+            // 去引号
+            if ((rawValue.StartsWith('"') && rawValue.EndsWith('"')) ||
+                (rawValue.StartsWith('\'') && rawValue.EndsWith('\'')))
+            {
+                rawValue = rawValue[1..^1];
+                result[key] = rawValue;
+                continue;
+            }
+
+            // 布尔值
+            if (rawValue is "true" or "True" or "TRUE")
+            {
+                result[key] = true;
+                continue;
+            }
+            if (rawValue is "false" or "False" or "FALSE")
+            {
+                result[key] = false;
+                continue;
+            }
+
+            // 数字
+            if (long.TryParse(rawValue, System.Globalization.NumberStyles.Any,
+                    System.Globalization.CultureInfo.InvariantCulture, out var longVal))
+            {
+                result[key] = longVal;
+                continue;
+            }
+            if (double.TryParse(rawValue, System.Globalization.NumberStyles.Any,
+                    System.Globalization.CultureInfo.InvariantCulture, out var doubleVal))
+            {
+                result[key] = doubleVal;
+                continue;
+            }
+
+            // 字符串
+            result[key] = rawValue;
+        }
+
+        return result.Count > 0 ? result : null;
     }
 }

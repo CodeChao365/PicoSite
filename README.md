@@ -11,7 +11,7 @@ PicoSite 是一个轻量级的静态站点生成器（SSG），基于 **.NET 10*
 PicoSite 走另一条路：**Markdown 写内容，Liquid 做主题，.NET 当引擎**。
 
 - **Markdig** 解析 Markdown — 最快、最标准的 .NET Markdown 库  
-- **DotLiquid** 渲染模板 — 被 Shopify、Jekyll 广泛使用，门槛低，AI 友好  
+- **Fluid** 渲染模板（Liquid 语法） — 高性能，AOT 兼容，被 Orchard Core 使用  
 - **PicoServer** 托管预览 + 热重载 — 纯 .NET 内置，零外部依赖  
 - **AOT 编译** — 可打包为 4-10 MB 的单文件，拷贝即用
 
@@ -203,9 +203,8 @@ Themes/default/
 |------|------|
 | **.NET 10** | 运行时 |
 | **Markdig** | Markdown → HTML |
-| **DotLiquid** | Liquid 模板引擎 |
+| **Fluid.Core** | Liquid 模板引擎（AOT 兼容） |
 | **PicoServer** | HTTP 服务器 + WebSocket 热重载 |
-| **YamlDotNet** | Front Matter 解析 |
 | **System.CommandLine** | CLI 框架 |
 
 ---

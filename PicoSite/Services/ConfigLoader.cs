@@ -15,8 +15,7 @@ public class ConfigLoader
         try
         {
             var json = File.ReadAllText(path);
-            var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-            return JsonSerializer.Deserialize<SiteConfig>(json, options) ?? new SiteConfig();
+            return JsonSerializer.Deserialize(json, PicoSiteJsonContext.Default.SiteConfig) ?? new SiteConfig();
         }
         catch
         {
