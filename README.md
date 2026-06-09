@@ -224,6 +224,9 @@ dotnet publish -c Release -r win-x64 --self-contained true
 
 # 运行
 dotnet run -- serve
+
+# 测试
+dotnet test
 ```
 
 ---
