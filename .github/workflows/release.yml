@@ -4,16 +4,12 @@ on:
   release:
     types: [published]
 
+permissions:
+  contents: write
+
 jobs:
-  publish:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-
-    strategy:
-      matrix:
-        rid: [win-x64, linux-x64, osx-x64, osx-arm64]
-
+  publish-windows:
+    runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
 
@@ -23,14 +19,66 @@ jobs:
           dotnet-version: "10.0.x"
           dotnet-quality: preview
 
-      - name: Set asset extension
-        id: asset
+      - name: Publish (win-x64)
         run: |
-          if [ "${{ matrix.rid }}" = "win-x64" ]; then
-            echo "ext=.exe" >> "$GITHUB_OUTPUT"
-          else
-            echo "ext=" >> "$GITHUB_OUTPUT"
-          fi
+          dotnet publish PicoSite/PicoSite.csproj `
+            --configuration Release `
+            --runtime win-x64 `
+            -p:PublishAot=true `
+            -p:DebugType=embedded `
+            --output ./publish/win-x64
+
+      - name: Upload Release Asset
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ./publish/win-x64/picosite.exe
+          asset_name: picosite-win-x64.exe
+          tag: ${{ github.ref_name }}
+          overwrite: true
+
+  publish-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+          dotnet-quality: preview
+
+      - name: Publish (linux-x64)
+        run: |
+          dotnet publish PicoSite/PicoSite.csproj \
+            --configuration Release \
+            --runtime linux-x64 \
+            -p:PublishAot=true \
+            -p:DebugType=embedded \
+            --output ./publish/linux-x64
+
+      - name: Upload Release Asset
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ./publish/linux-x64/picosite
+          asset_name: picosite-linux-x64
+          tag: ${{ github.ref_name }}
+          overwrite: true
+
+  publish-macos:
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        rid: [osx-x64, osx-arm64]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+          dotnet-quality: preview
 
       - name: Publish (${{ matrix.rid }})
         run: |
@@ -45,7 +93,7 @@ jobs:
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: ./publish/${{ matrix.rid }}/picosite${{ steps.asset.outputs.ext }}
-          asset_name: picosite-${{ matrix.rid }}${{ steps.asset.outputs.ext }}
+          file: ./publish/${{ matrix.rid }}/picosite
+          asset_name: picosite-${{ matrix.rid }}
           tag: ${{ github.ref_name }}
           overwrite: true
