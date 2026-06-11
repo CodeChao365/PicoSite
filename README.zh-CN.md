@@ -18,7 +18,7 @@ Go、Rust 生态虽有轻量级工具，但大多沿用「配置驱动+固定主
 ## 快速开始
 
 1. 把 `picosite` 放到 Markdown 文件夹里
-2. 运行 `picosite serve` 打开 http://localhost:8080 预览
+2. 运行 `picosite serve` 打开 http://localhost:8090 预览
 3. 改内容保存后浏览器自动刷新
 
 发布时运行 `picosite build`，静态文件输出到 `_site/`。
@@ -34,7 +34,7 @@ Go、Rust 生态虽有轻量级工具，但大多沿用「配置驱动+固定主
 
 | 选项 | 适用 | 默认 |
 |------|------|------|
-| `--port 3000` | serve | 8080 |
+| `--port 3000` | serve | 8090 |
 | `--theme dark` | serve, build | default |
 | `--output ./dist` | build | ./_site |
 
@@ -73,7 +73,7 @@ date: 2026-06-09
 {
   "title": "我的站点",
   "theme": "default",
-  "port": 8080
+  "port": 8090
 }
 ```
 

@@ -18,7 +18,7 @@ Go/Rust alternatives are lightweight but follow "config-driven + rigid theme" pa
 ## Quick Start
 
 1. Put `picosite` in your Markdown folder
-2. Run `picosite serve` and open http://localhost:8080 to preview
+2. Run `picosite serve` and open http://localhost:8090 to preview
 3. Edit your Markdown — browser auto-reloads
 
 To publish, run `picosite build` — static files go to `_site/`.
@@ -34,7 +34,7 @@ To publish, run `picosite build` — static files go to `_site/`.
 
 | Option | Applies to | Default |
 |--------|-----------|---------|
-| `--port 3000` | serve | 8080 |
+| `--port 3000` | serve | 8090 |
 | `--theme dark` | serve, build | default |
 | `--output ./dist` | build | ./_site |
 
@@ -73,7 +73,7 @@ Create `picosite.json`:
 {
   "title": "My Site",
   "theme": "default",
-  "port": 8080
+  "port": 8090
 }
 ```
 
