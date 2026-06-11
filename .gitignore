@@ -9,6 +9,7 @@ obj/
 
 # Build output
 _site/
+publish/
 dist/
 
 # IDE

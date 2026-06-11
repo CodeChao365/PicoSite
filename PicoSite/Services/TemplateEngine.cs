@@ -27,24 +27,30 @@ public class TemplateEngine
             throw new Exception($"模板解析失败: {error}");
 
         var options = new TemplateOptions();
-        options.MemberAccessStrategy = new UnsafeMemberAccessStrategy();
         var context = new TemplateContext(options);
-        context.SetValue("site", new
+        context.SetValue("site", new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase)
         {
-            title = site.Title,
-            description = site.Description,
-            pages = site.Pages.Select(p => new { p.Title, p.Url }).ToList()
+            ["title"] = site.Title,
+            ["description"] = site.Description ?? "",
+            ["pages"] = site.Pages.Select(p => new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["Title"] = p.Title,
+                ["Url"] = p.Url
+            }).ToList()
         });
-        context.SetValue("page", new
+        context.SetValue("page", new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase)
         {
-            title = page.Title,
-            url = page.Url,
-            date = page.Date?.ToString("yyyy-MM-dd"),
-            excerpt = page.Excerpt
+            ["title"] = page.Title,
+            ["url"] = page.Url,
+            ["date"] = page.Date?.ToString("yyyy-MM-dd") ?? "",
+            ["excerpt"] = page.Excerpt ?? ""
         });
         context.SetValue("current_url", page.Url);
         context.SetValue("content", content);
-        context.SetValue("theme", new { assets = "/themes/" + Path.GetFileName(_themeDir) + "/assets" });
+        context.SetValue("theme", new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["assets"] = "/themes/" + Path.GetFileName(_themeDir) + "/assets"
+        });
 
         return template.Render(context);
     }
