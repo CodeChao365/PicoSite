@@ -104,6 +104,9 @@ assets/style.css # 样式
 | `{{ content }}` | Markdown 渲染后的 HTML |
 | `{{ theme.assets }}` | 主题资源路径 |
 
+> ⚠️ `{{ content }}` 需写成 `{{ content | raw }}` 才能渲染 HTML。  
+> `{% include %}` 的文件名必须加引号：`{% include "header.html" %}`。
+
 支持 Liquid 标签：`{% include %}` `{% for %}` `{% if %}`。
 
 ---

@@ -104,6 +104,9 @@ Available template variables:
 | `{{ content }}` | Rendered HTML |
 | `{{ theme.assets }}` | Theme asset path |
 
+> ⚠️ `{{ content }}` must be written as `{{ content | raw }}` to render HTML.  
+> `{% include %}` file names need quotes: `{% include "header.html" %}`.
+
 Supports Liquid tags: `{% include %}` `{% for %}` `{% if %}`.
 
 ---

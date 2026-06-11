@@ -1,5 +1,5 @@
+using System.Text.RegularExpressions;
 using Fluid;
-using Microsoft.Extensions.FileProviders;
 using PicoSite.Models;
 
 namespace PicoSite.Services;
@@ -21,15 +21,13 @@ public class TemplateEngine
             throw new FileNotFoundException($"主题模板缺失: {path}");
 
         var source = File.ReadAllText(path);
-
-        var options = new TemplateOptions
-        {
-            FileProvider = new PhysicalFileProvider(_themeDir),
-        };
+        source = ResolveIncludes(source);
 
         if (!_parser.TryParse(source, out var template, out var error))
             throw new Exception($"模板解析失败: {error}");
 
+        var options = new TemplateOptions();
+        options.MemberAccessStrategy = new UnsafeMemberAccessStrategy();
         var context = new TemplateContext(options);
         context.SetValue("site", new
         {
@@ -49,5 +47,20 @@ public class TemplateEngine
         context.SetValue("theme", new { assets = "/themes/" + Path.GetFileName(_themeDir) + "/assets" });
 
         return template.Render(context);
+    }
+
+    private string ResolveIncludes(string source)
+    {
+        // 手动解析 {% include "filename.html" %} 或 {% include 'filename.html' %}
+        // 将引用的 .html 文件内容内联进来，避免 Fluid 自动追加 .liquid 后缀
+        return Regex.Replace(source, @"{%\s*include\s+[""']([^""']+)[""']\s*%}", match =>
+        {
+            var includeFile = match.Groups[1].Value;
+            var includePath = Path.Combine(_themeDir, includeFile);
+            if (File.Exists(includePath))
+                return File.ReadAllText(includePath);
+            // 如果找不到，保留原样以便调试
+            return match.Value;
+        });
     }
 }
