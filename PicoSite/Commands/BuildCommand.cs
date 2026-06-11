@@ -51,5 +51,11 @@ public class BuildCommand : Command
 
         var count = Directory.GetFiles(outputDir, "*.html", SearchOption.AllDirectories).Length;
         Console.WriteLine($"完成！共生成 {count} 个页面");
+        if (count == 0)
+        {
+            Console.WriteLine($"提示: 当前源目录 {sourceDir} 下未找到 .md 文件。");
+            Console.WriteLine($"      请切换到包含 content/ 的目录（如 sample/），");
+            Console.WriteLine($"      或参考 README 创建内容。");
+        }
     }
 }

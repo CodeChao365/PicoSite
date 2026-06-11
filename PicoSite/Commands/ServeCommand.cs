@@ -53,6 +53,14 @@ public class ServeCommand : Command
         var templateEngine = new TemplateEngine(themeDir);
         var generator = new SiteGenerator(parser, templateEngine, config);
         var allPages = generator.LoadPages(sourceDir);
+        if (allPages.Count == 0)
+        {
+            Console.WriteLine($"⚠️  未找到任何 Markdown 内容文件。");
+            Console.WriteLine($"   当前源目录: {sourceDir}");
+            Console.WriteLine($"   提示: 请切换到包含 content/ 的目录（如 sample/），");
+            Console.WriteLine($"         或参考 README 创建内容。");
+            Console.WriteLine();
+        }
         var site = new SiteModel
         {
             Title = config.Title ?? "PicoSite",
